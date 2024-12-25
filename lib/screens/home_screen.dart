@@ -1,3 +1,4 @@
+// lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:pet_store_mobile_app/widgets/custom_bottom_nav.dart';
 import 'package:pet_store_mobile_app/widgets/home/latest_arrival_section.dart';
@@ -5,6 +6,7 @@ import 'package:pet_store_mobile_app/widgets/home/category_section.dart';
 import 'package:pet_store_mobile_app/widgets/home/app_bar_section.dart';
 import 'package:pet_store_mobile_app/models/category.dart';
 import 'package:pet_store_mobile_app/models/product.dart';
+import 'package:pet_store_mobile_app/services/product_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,7 +16,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // int _selectedIndex = 0;
+  final ProductService _productService = ProductService();
+  List<Product> _products = [];
+  bool _isLoading = true;
+  String? _error;
 
   final List<Category> categories = [
     Category(
@@ -67,112 +72,32 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
-  final List<Product> products = [
-    Product(
-      id: '1',
-      name: 'Deluxe Dog Treats for cats',
-      price: 1325,
-      imageUrl:
-          'https://images.unsplash.com/photo-1582798358481-d199fb7347bb?w=500',
-    ),
-    Product(
-      id: '2',
-      name: 'Premium Cat Food for dogs',
-      price: 635,
-      imageUrl:
-          'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
-    ),
-    Product(
-      id: '3',
-      name: 'Tshirt for your cat',
-      price: 1325,
-      imageUrl:
-          'https://lollimeowpet.com/cdn/shop/products/O1CN01idyJsn1SZ7cDnEYzy__1080692260.jpg_400x400_85ec0b9b-072e-41af-abab-dba7d5c1d3ea_400x.jpg?v=1571718188',
-    ),
-    Product(
-      id: '2',
-      name: 'Premium Cat Food',
-      price: 635,
-      imageUrl:
-          'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
-    ),
-    Product(
-      id: '1',
-      name: 'Deluxe Dog Treats',
-      price: 1325,
-      imageUrl:
-          'https://images.unsplash.com/photo-1582798358481-d199fb7347bb?w=500',
-    ),
-    Product(
-      id: '2',
-      name: 'Premium Cat Food',
-      price: 635,
-      imageUrl:
-          'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
-    ),
-    Product(
-      id: '1',
-      name: 'Deluxe Dog Treats',
-      price: 1325,
-      imageUrl:
-          'https://images.unsplash.com/photo-1582798358481-d199fb7347bb?w=500',
-    ),
-    Product(
-      id: '2',
-      name: 'Premium Cat Food',
-      price: 635,
-      imageUrl:
-          'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
-    ),
-    Product(
-      id: '1',
-      name: 'Deluxe Dog Treats',
-      price: 1325,
-      imageUrl:
-          'https://images.unsplash.com/photo-1582798358481-d199fb7347bb?w=500',
-    ),
-    Product(
-      id: '2',
-      name: 'Premium Cat Food',
-      price: 635,
-      imageUrl:
-          'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
-    ),
-    Product(
-      id: '1',
-      name: 'Deluxe Dog Treats',
-      price: 1325,
-      imageUrl:
-          'https://images.unsplash.com/photo-1582798358481-d199fb7347bb?w=500',
-    ),
-    Product(
-      id: '2',
-      name: 'Premium Cat Food',
-      price: 635,
-      imageUrl:
-          'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
-    ),
-    Product(
-      id: '1',
-      name: 'Deluxe Dog Treats',
-      price: 1325,
-      imageUrl:
-          'https://images.unsplash.com/photo-1582798358481-d199fb7347bb?w=500',
-    ),
-    Product(
-      id: '2',
-      name: 'Premium Cat Food',
-      price: 635,
-      imageUrl:
-          'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
 
-  // void _onNavigationIndexChanged(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
+  Future<void> _loadProducts() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      final products = await _productService.getProducts();
+
+      setState(() {
+        _products = products;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load products: $e';
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,14 +108,41 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const AppBarSection(username: 'Randil'),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CategorySection(categories: categories),
-                    const SizedBox(height: 16),
-                    LatestArrivalsSection(products: products),
-                  ],
+              child: RefreshIndicator(
+                onRefresh: _loadProducts,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CategorySection(categories: categories),
+                      const SizedBox(height: 16),
+                      if (_isLoading)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      else if (_error != null)
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Text(_error!,
+                                    style: TextStyle(color: Colors.red)),
+                                ElevatedButton(
+                                  onPressed: _loadProducts,
+                                  child: const Text('Retry'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        LatestArrivalsSection(products: _products),
+                    ],
+                  ),
                 ),
               ),
             ),

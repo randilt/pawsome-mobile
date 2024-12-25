@@ -42,6 +42,13 @@ class ProductCard extends StatelessWidget {
           product.imageUrl,
           fit: BoxFit.cover,
           width: double.infinity,
+          errorBuilder: (context, error, stackTrace) {
+            return Image.asset(
+              'assets/images/placeholder.jpg',
+              fit: BoxFit.cover,
+              width: double.infinity,
+            );
+          },
         ),
       ),
     );
