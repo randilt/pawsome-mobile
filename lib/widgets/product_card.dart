@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/product.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:pet_store_mobile_app/models/product.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -35,15 +36,19 @@ class ProductCard extends StatelessWidget {
   Widget _buildProductImage() {
     return Expanded(
       child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(5),
-        ),
-        child: Image.network(
-          product.imageUrl,
-          fit: BoxFit.cover,
-          width: double.infinity,
-        ),
-      ),
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(5),
+          ),
+          child: CachedNetworkImage(
+            // use CachedNetworkImage to cache the image for better performance
+            imageUrl: product.imageUrl,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            placeholder: (context, url) => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+          )),
     );
   }
 
