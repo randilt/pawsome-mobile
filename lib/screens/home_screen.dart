@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import '../widgets/category_slider.dart';
-import '../widgets/product_grid.dart';
-import '../models/category.dart';
-import '../models/product.dart';
+import 'package:pet_store_mobile_app/widgets/custom_bottom_nav.dart';
+import 'package:pet_store_mobile_app/widgets/home/latest_arrival_section.dart';
+import 'package:pet_store_mobile_app/widgets/home/category_section.dart';
+import 'package:pet_store_mobile_app/widgets/home/app_bar_section.dart';
+import 'package:pet_store_mobile_app/models/category.dart';
+import 'package:pet_store_mobile_app/models/product.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  // int _selectedIndex = 0;
 
   final List<Category> categories = [
     Category(
@@ -142,6 +144,12 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
+  // void _onNavigationIndexChanged(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,85 +157,15 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const CircleAvatar(
-                        backgroundColor: Colors.grey,
-                        child: Icon(Icons.person_outline, color: Colors.white),
-                      ),
-                      const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Hi, Randil',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            ),
+            const AppBarSection(username: 'Randil'),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Browse Categories',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                    ),
-                    CategorySlider(categories: categories),
+                    CategorySection(categories: categories),
                     const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Latest Arrivals',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                    ),
-                    ProductGrid(products: products),
+                    LatestArrivalsSection(products: products),
                   ],
                 ),
               ),
@@ -235,31 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Badge(
-              label: const Text('3'),
-              child: const Icon(Icons.shopping_cart),
-            ),
-            label: 'My Cart',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'My Profile',
-          ),
-        ],
-      ),
+      bottomNavigationBar: const CustomBottomNav(currentIndex: 0),
     );
   }
 }
