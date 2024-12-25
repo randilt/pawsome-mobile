@@ -16,7 +16,7 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 2,
+        elevation: 0.5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
@@ -72,8 +72,8 @@ class _ProductName extends StatelessWidget {
     return Text(
       name,
       style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
       ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
@@ -92,7 +92,7 @@ class _ProductPrice extends StatelessWidget {
       'Rs. $price',
       style: const TextStyle(
         fontSize: 14,
-        color: Colors.grey,
+        color: Color.fromARGB(255, 104, 104, 104),
       ),
     );
   }
