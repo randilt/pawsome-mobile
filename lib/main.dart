@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'package:pet_store_mobile_app/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +26,12 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       home: const HomeScreen(),
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => const HomeScreen(),
+      //   '/cart': (context) => const CartScreen(),
+      //   '/profile': (context) => const ProfileScreen(),
+      // },
     );
   }
 }

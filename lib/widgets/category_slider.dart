@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/category.dart';
+import 'package:pet_store_mobile_app/models/category.dart';
 
 class CategorySlider extends StatelessWidget {
   final List<Category> categories;
