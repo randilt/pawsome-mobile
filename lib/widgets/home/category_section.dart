@@ -33,6 +33,9 @@ class CategorySection extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(
+          height: 8,
+        ),
         CategorySlider(categories: categories),
       ],
     );

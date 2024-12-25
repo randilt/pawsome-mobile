@@ -70,14 +70,14 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Product> products = [
     Product(
       id: '1',
-      name: 'Deluxe Dog Treats',
+      name: 'Deluxe Dog Treats for cats',
       price: 1325,
       imageUrl:
           'https://images.unsplash.com/photo-1582798358481-d199fb7347bb?w=500',
     ),
     Product(
       id: '2',
-      name: 'Premium Cat Food',
+      name: 'Premium Cat Food for dogs',
       price: 635,
       imageUrl:
           'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500',
