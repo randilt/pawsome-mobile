@@ -2,9 +2,11 @@ class Product {
   final String id;
   final String name;
   final double price;
-  final String imageUrl;
+  final String? imageUrl;
   final String? description;
   final String? categoryId;
+  final String? longDescription;
+  final String categoryName;
   final int stockQuantity;
 
   Product({
@@ -13,7 +15,9 @@ class Product {
     required this.price,
     required this.imageUrl,
     this.description,
+    this.longDescription,
     this.categoryId,
+    this.categoryName = '',
     this.stockQuantity = 0,
   });
 
@@ -26,6 +30,8 @@ class Product {
       description: json['description'],
       categoryId: json['category_id'],
       stockQuantity: int.parse(json['stock_quantity']),
+      longDescription: json['long_description'],
+      categoryName: json['category_name'],
     );
   }
 }

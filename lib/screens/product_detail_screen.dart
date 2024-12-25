@@ -43,10 +43,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   children: [
                     Image.network(
                       widget.product?.imageUrl ??
-                          'https://images.unsplash.com/photo-1582798358481-d199fb7347bb?w=500',
+                          'assets/images/placeholder.jpg',
                       width: double.infinity,
                       height: 300,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/placeholder.jpg',
+                          width: double.infinity,
+                          height: 300,
+                          fit: BoxFit.cover,
+                        );
+                      },
                     ),
                     Positioned(
                       top: 16,
@@ -80,7 +88,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.product?.name ?? 'Deluxe Dog Treats Bundle',
+                        widget.product?.name ?? 'No title available',
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -88,16 +96,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Rs. ${widget.product?.price ?? 1325.00}',
+                        'Rs. ${widget.product?.price ?? 00.00}',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'A premium selection of tasty and healthy treats your dog will love.',
-                        style: TextStyle(
+                      Text(
+                        widget.product?.description ?? '',
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
                         ),
@@ -149,15 +157,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ],
                       ),
                       const SizedBox(height: 24),
-                      const Text(
-                        'Give your furry friend the ultimate treat with our Deluxe Dog Treats Bundle. Packed with a variety of wholesome and delicious options, these treats are made with high-quality, natural ingredients to ensure your dog gets the nutrition they deserve. Whether you\'re rewarding good behavior or just showing some love, these tasty bites are perfect for every occasion.',
-                        style: TextStyle(fontSize: 16),
+                      Text(
+                        widget.product?.longDescription ?? '',
+                        style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Our treats are crafted to support your dog\'s overall health while providing irresistible flavors they can\'t resist. From chewy to crunchy textures, each treat is designed to keep your dog happy and engaged. With no artificial additives.',
-                        style: TextStyle(fontSize: 16),
-                      ),
+                      // const Text(
+                      //   'Our treats are crafted to support your dog\'s overall health while providing irresistible flavors they can\'t resist. From chewy to crunchy textures, each treat is designed to keep your dog happy and engaged. With no artificial additives.',
+                      //   style: TextStyle(fontSize: 16),
+                      // ),
                     ],
                   ),
                 ),

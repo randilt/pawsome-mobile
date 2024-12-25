@@ -39,7 +39,7 @@ class ProductCard extends StatelessWidget {
           top: Radius.circular(5),
         ),
         child: Image.network(
-          product.imageUrl,
+          product.imageUrl ?? 'assets/images/placeholder.jpg',
           fit: BoxFit.cover,
           width: double.infinity,
           errorBuilder: (context, error, stackTrace) {
