@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pet_store_mobile_app/models/product.dart';
 import 'package:pet_store_mobile_app/screens/product_detail_screen.dart';
-import '../models/product.dart';
-import './product_card.dart';
+import 'package:pet_store_mobile_app/widgets/product_card.dart';
 
 class ProductGrid extends StatelessWidget {
   final List<Product> products;
