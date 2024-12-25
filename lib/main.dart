@@ -26,6 +26,12 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       home: const HomeScreen(),
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => const HomeScreen(),
+      //   '/cart': (context) => const CartScreen(),
+      //   '/profile': (context) => const ProfileScreen(),
+      // },
     );
   }
 }

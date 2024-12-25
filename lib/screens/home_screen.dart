@@ -41,6 +41,30 @@ class _HomeScreenState extends State<HomeScreen> {
       imageUrl:
           'https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=500',
     ),
+    Category(
+      id: '1',
+      name: 'For Dogs',
+      imageUrl:
+          'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=500',
+    ),
+    Category(
+      id: '2',
+      name: 'For Cats',
+      imageUrl:
+          'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500',
+    ),
+    Category(
+      id: '3',
+      name: 'For Birds',
+      imageUrl:
+          'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=500',
+    ),
+    Category(
+      id: '4',
+      name: 'For Fish',
+      imageUrl:
+          'https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=500',
+    ),
   ];
 
   final List<Product> products = [
