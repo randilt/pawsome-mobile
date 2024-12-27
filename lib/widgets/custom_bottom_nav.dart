@@ -17,7 +17,7 @@ class CustomBottomNav extends StatelessWidget {
         // navigate to home
         Navigator.pushNamedAndRemoveUntil(
           context,
-          '/',
+          '/home',
           (route) => false, // clear all previous routes
         );
         break;

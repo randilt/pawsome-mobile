@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pet_store_mobile_app/screens/home_screen.dart';
+import 'package:pet_store_mobile_app/screens/login_screen.dart';
+import 'package:pet_store_mobile_app/screens/my_profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,13 +27,15 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const HomeScreen(),
-      // initialRoute: '/',
-      // routes: {
-      //   '/': (context) => const HomeScreen(),
-      //   '/cart': (context) => const CartScreen(),
-      //   '/profile': (context) => const ProfileScreen(),
-      // },
+      // home: const HomeScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+
+        // '/cart': (context) => const CartScreen(),
+        '/profile': (context) => const MyProfileScreen(),
+      },
     );
   }
 }
