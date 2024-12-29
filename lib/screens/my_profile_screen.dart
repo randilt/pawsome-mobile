@@ -3,7 +3,7 @@ import 'package:pet_store_mobile_app/widgets/custom_bottom_nav.dart';
 import 'package:pet_store_mobile_app/services/auth_service.dart';
 
 class MyProfileScreen extends StatelessWidget {
-  const MyProfileScreen({Key? key}) : super(key: key);
+  const MyProfileScreen({super.key});
 
   Future<void> _logout(BuildContext context) async {
     try {
