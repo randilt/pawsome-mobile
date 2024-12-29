@@ -62,18 +62,40 @@ class AuthService {
     await prefs.remove(sessionCookieKey);
   }
 
-  Future<void> logout() async {
+  Future<bool> logout() async {
     try {
+      print('Starting logout process...'); // Debug print
+
       final cookie = await getSessionCookie();
-      if (cookie != null) {
-        await http.post(
-          Uri.parse('$baseUrl/auth/logout.php'),
-          headers: {'Cookie': cookie},
-        );
+      print('Retrieved cookie: $cookie'); // Debug print
+
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+      };
+
+      if (!kIsWeb && cookie != null) {
+        headers['Cookie'] = cookie;
       }
+
+      print(
+          'Sending logout request to: $baseUrl/auth/logout.php'); // Debug print
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/logout.php'), // Updated path to match login
+        headers: headers,
+      );
+
+      print('Logout response status: ${response.statusCode}'); // Debug print
+      print('Logout response body: ${response.body}'); // Debug print
+
+      // Clear cookie regardless of response
       await clearSessionCookie();
+
+      return response.statusCode == 200;
     } catch (e) {
       print('Logout error: $e');
+      // Still clear cookie even if request fails
+      await clearSessionCookie();
+      throw Exception('Logout failed: $e');
     }
   }
 }
