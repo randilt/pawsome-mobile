@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
+import 'package:pet_store_mobile_app/config/env_config.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
 class AuthService {
-  static const String baseUrl = 'http://localhost/pawsome/api';
+  static final String baseUrl = EnvConfig.apiBaseUrl;
   static const String sessionCookieKey = 'PHPSESSID';
 
   Future<bool> login(String email, String password) async {

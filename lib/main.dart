@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:pet_store_mobile_app/config/env_config.dart';
 import 'package:pet_store_mobile_app/screens/home_screen.dart';
 import 'package:pet_store_mobile_app/screens/login_screen.dart';
 import 'package:pet_store_mobile_app/screens/my_profile_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  //load env variables
+  await EnvConfig.initialize();
   runApp(const MyApp());
 }
 
