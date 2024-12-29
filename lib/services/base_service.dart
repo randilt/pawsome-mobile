@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'auth_service.dart';
 
@@ -11,7 +12,7 @@ class BaseService {
     final cookie = await _authService.getSessionCookie();
     return http.get(
       Uri.parse('$baseUrl/$endpoint'),
-      headers: cookie != null ? {'Cookie': cookie} : {},
+      headers: !kIsWeb && cookie != null ? {'Cookie': cookie} : {},
     );
   }
 
@@ -22,7 +23,7 @@ class BaseService {
       body: body != null ? jsonEncode(body) : null,
       headers: {
         'Content-Type': 'application/json',
-        if (cookie != null) 'Cookie': cookie,
+        if (!kIsWeb && cookie != null) 'Cookie': cookie,
       },
     );
   }
