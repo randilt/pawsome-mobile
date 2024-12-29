@@ -1,18 +1,11 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:pet_store_mobile_app/models/product.dart';
+import 'package:pet_store_mobile_app/services/base_service.dart';
 
-class ProductService {
-  static const String baseUrl = 'http://localhost/pawsome/api';
-
+class ProductService extends BaseService {
   Future<List<Product>> getProducts() async {
     try {
-      final url = Uri.parse('$baseUrl/products/get_products.php');
-      // print('Fetching products from: $url'); // Debug print
-
-      final response = await http.get(url);
-      // print('Response status code: ${response.statusCode}'); // Debug print
-      // print('Response body: ${response.body}'); // Debug print
+      final response = await get('products/get_products.php');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -23,7 +16,6 @@ class ProductService {
             'Failed to load products: Status ${response.statusCode}');
       }
     } catch (e) {
-      // print('Error details: $e'); // Debug print
       throw Exception('Error fetching products: $e');
     }
   }
