@@ -3,6 +3,7 @@ import 'package:pet_store_mobile_app/config/env_config.dart';
 import 'package:pet_store_mobile_app/screens/home_screen.dart';
 import 'package:pet_store_mobile_app/screens/login_screen.dart';
 import 'package:pet_store_mobile_app/screens/my_profile_screen.dart';
+import 'package:pet_store_mobile_app/screens/register_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,8 +37,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),
-
         // '/cart': (context) => const CartScreen(),
         '/profile': (context) => const MyProfileScreen(),
       },

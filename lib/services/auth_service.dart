@@ -9,6 +9,39 @@ class AuthService {
   static final String baseUrl = EnvConfig.apiBaseUrl;
   static const String sessionCookieKey = 'PHPSESSID';
 
+  Future<Map<String, dynamic>> register(String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/user/register.php'),
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 201) {
+        return {
+          'success': true,
+          'message': responseData['message'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': responseData['error'] ?? 'Registration failed',
+        };
+      }
+    } catch (e) {
+      print('Registration error: $e');
+      return {
+        'success': false,
+        'message': 'An error occurred during registration',
+      };
+    }
+  }
+
   Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
