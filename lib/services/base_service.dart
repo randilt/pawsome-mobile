@@ -7,12 +7,13 @@ import 'auth_service.dart';
 
 class BaseService {
   static final String baseUrl = EnvConfig.apiBaseUrl;
+  static final String apiV = EnvConfig.apiVersion;
   final AuthService _authService = AuthService();
 
   Future<http.Response> get(String endpoint) async {
     final cookie = await _authService.getSessionCookie();
     return http.get(
-      Uri.parse('$baseUrl/$endpoint'),
+      Uri.parse('$baseUrl/$apiV/$endpoint'),
       headers: !kIsWeb && cookie != null ? {'Cookie': cookie} : {},
     );
   }

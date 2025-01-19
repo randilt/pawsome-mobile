@@ -46,6 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       try {
         final registrationResult = await _authService.register(
+          _usernameController.text,
           _emailController.text,
           _passwordController.text,
         );

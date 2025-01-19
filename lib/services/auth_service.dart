@@ -7,13 +7,16 @@ import 'package:shared_preferences/shared_preferences.dart'
 
 class AuthService {
   static final String baseUrl = EnvConfig.apiBaseUrl;
+  static final String apiV = EnvConfig.apiVersion;
   static const String sessionCookieKey = 'PHPSESSID';
 
-  Future<Map<String, dynamic>> register(String email, String password) async {
+  Future<Map<String, dynamic>> register(
+      String name, String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/user/register.php'),
+        Uri.parse('$baseUrl/$apiV/users.php/register'),
         body: jsonEncode({
+          'name': name,
           'email': email,
           'password': password,
         }),
@@ -45,7 +48,7 @@ class AuthService {
   Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/user/login.php'),
+        Uri.parse('$baseUrl/v1/users.php/login'),
         body: jsonEncode({
           'email': email,
           'password': password,

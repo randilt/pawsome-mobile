@@ -5,7 +5,7 @@ import 'package:pet_store_mobile_app/services/base_service.dart';
 class ProductService extends BaseService {
   Future<List<Product>> getProducts() async {
     try {
-      final response = await get('products/get_products.php');
+      final response = await get('products.php');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
