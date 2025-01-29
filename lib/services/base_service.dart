@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
-import 'package:pet_store_mobile_app/config/env_config.dart';
 import 'auth_service.dart';
 
 class BaseService {
-  static final String baseUrl = EnvConfig.apiBaseUrl;
-  static final String apiV = EnvConfig.apiVersion;
+  static const String baseUrl = "https://pawsome.randiltharusha.me/api";
+  static const String apiV = "v1";
   final AuthService _authService = AuthService();
 
   Future<http.Response> get(String endpoint) async {
