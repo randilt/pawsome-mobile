@@ -48,7 +48,7 @@ class AuthService {
   Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/v1/users.php/login'),
+        Uri.parse('$baseUrl/$apiV/users.php/login'),
         body: jsonEncode({
           'email': email,
           'password': password,
@@ -114,9 +114,10 @@ class AuthService {
       }
 
       print(
-          'Sending logout request to: $baseUrl/auth/logout.php'); // Debug print
+          'Sending logout request to: $baseUrl/$apiV/users.php/logout'); // Debug print
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/logout.php'), // Updated path to match login
+        Uri.parse(
+            '$baseUrl/$apiV/users.php/logout'), // Updated path to match login
         headers: headers,
       );
 
