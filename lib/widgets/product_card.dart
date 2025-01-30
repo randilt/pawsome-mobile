@@ -13,6 +13,9 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get theme colors
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -20,12 +23,12 @@ class ProductCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildProductImage(),
-            _buildProductInfo(),
+            _buildProductInfo(context),
           ],
         ),
       ),
@@ -54,7 +57,7 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProductInfo() {
+  Widget _buildProductInfo(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -78,9 +81,10 @@ class _ProductName extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       name,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w400,
+        color: Theme.of(context).textTheme.bodyMedium?.color,
       ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
@@ -97,9 +101,9 @@ class _ProductPrice extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       'Rs. $price',
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 14,
-        color: Color.fromARGB(255, 104, 104, 104),
+        color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
       ),
     );
   }
