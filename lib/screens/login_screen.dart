@@ -54,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               TextFormField(
                 controller: _emailController,
+                style: const TextStyle(color: Colors.black),
                 decoration: AppStyles.inputDecoration(
                   label: 'Email',
                   hint: 'Enter your email',
@@ -73,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
+                style: const TextStyle(color: Colors.black),
                 obscureText: _obscurePassword,
                 decoration: AppStyles.inputDecoration(
                   label: 'Password',
@@ -109,7 +111,10 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Don't have an account? "),
+                  const Text(
+                    "Don't have an account? ",
+                    style: TextStyle(color: Colors.black),
+                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, '/register');

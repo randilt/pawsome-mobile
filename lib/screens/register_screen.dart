@@ -92,6 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               TextFormField(
                 controller: _usernameController,
+                style: const TextStyle(color: Colors.black),
                 decoration: AppStyles.inputDecoration(
                   label: 'Username',
                   hint: 'Enter your username',
@@ -107,6 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
+                style: const TextStyle(color: Colors.black),
                 decoration: AppStyles.inputDecoration(
                   label: 'Email',
                   hint: 'Enter your email',
@@ -122,6 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
+                style: const TextStyle(color: Colors.black),
                 obscureText: _obscurePassword,
                 decoration: AppStyles.inputDecoration(
                   label: 'Password',
@@ -161,6 +164,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextFormField(
                 controller: _confirmPasswordController,
                 obscureText: _obscureConfirmPassword,
+                style: const TextStyle(color: Colors.black),
                 decoration: AppStyles.inputDecoration(
                   label: 'Confirm Password',
                   hint: 'Confirm your password',
@@ -199,7 +203,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Already have an account? "),
+                  const Text(
+                    "Already have an account? ",
+                    style: TextStyle(color: Colors.black),
+                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
