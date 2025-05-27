@@ -1,54 +1,105 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
-import 'package:pet_store_mobile_app/config/env_config.dart';
-import 'package:shared_preferences/shared_preferences.dart'
-    show SharedPreferences;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../config/env_config.dart';
+import '../models/user.dart';
 
 class AuthService {
   static final String baseUrl = EnvConfig.apiBaseUrl;
-  static final String apiV = EnvConfig.apiVersion;
-  static const String sessionCookieKey = 'PHPSESSID';
+  static const String tokenKey = 'auth_token';
+  static const String userKey = 'user_data';
 
+  // Get stored token
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(tokenKey);
+  }
+
+  // Save token
+  Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(tokenKey, token);
+  }
+
+  // Save user data
+  Future<void> saveUser(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(userKey, jsonEncode(user.toJson()));
+  }
+
+  // Get stored user
+  Future<User?> getUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString(userKey);
+    if (userData != null) {
+      return User.fromJson(jsonDecode(userData));
+    }
+    return null;
+  }
+
+  // Clear stored data
+  Future<void> clearAuthData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(tokenKey);
+    await prefs.remove(userKey);
+  }
+
+  // Register user
   Future<Map<String, dynamic>> register(
       String name, String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/$apiV/users.php/register'),
+        Uri.parse('$baseUrl/register'),
         body: jsonEncode({
           'name': name,
           'email': email,
           'password': password,
+          'password_confirmation': password,
         }),
         headers: {'Content-Type': 'application/json'},
       );
 
+      print('Register response status: ${response.statusCode}');
+      print('Register response body: ${response.body}');
+
       final responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Save token and user data
+        if (responseData['token'] != null) {
+          await saveToken(responseData['token']);
+        }
+        if (responseData['user'] != null) {
+          final user = User.fromJson(responseData['user']);
+          await saveUser(user);
+        }
+
         return {
           'success': true,
-          'message': responseData['message'],
+          'message': 'Registration successful',
+          'user': responseData['user'],
+          'token': responseData['token'],
         };
       } else {
         return {
           'success': false,
-          'message': responseData['error'] ?? 'Registration failed',
+          'message': responseData['message'] ?? 'Registration failed',
         };
       }
     } catch (e) {
       print('Registration error: $e');
       return {
         'success': false,
-        'message': 'An error occurred during registration',
+        'message': 'An error occurred during registration: $e',
       };
     }
   }
 
+  // Login user
   Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/$apiV/users.php/login'),
+        Uri.parse('$baseUrl/login'),
         body: jsonEncode({
           'email': email,
           'password': password,
@@ -56,15 +107,21 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
       );
 
+      print('Login response status: ${response.statusCode}');
+      print('Login response body: ${response.body}');
+
       if (response.statusCode == 200) {
-        // for non-web platforms, manually handle the cookie
-        if (!kIsWeb) {
-          String? cookie = response.headers['set-cookie'];
-          if (cookie != null) {
-            final sessionId = cookie.split(';')[0];
-            await saveSessionCookie(sessionId);
-          }
+        final responseData = jsonDecode(response.body);
+
+        // Save token and user data
+        if (responseData['token'] != null) {
+          await saveToken(responseData['token']);
         }
+        if (responseData['user'] != null) {
+          final user = User.fromJson(responseData['user']);
+          await saveUser(user);
+        }
+
         return true;
       }
       return false;
@@ -74,65 +131,77 @@ class AuthService {
     }
   }
 
-  Future<String?> getSessionCookie() async {
-    // for web, we don't need to manually handle cookies so return null
-    if (kIsWeb) return null;
-
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(sessionCookieKey);
-  }
-
-  Future<void> saveSessionCookie(String cookie) async {
-    // only save cookie manually for non-web platforms
-    if (kIsWeb) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(sessionCookieKey, cookie);
-  }
-
-  Future<void> clearSessionCookie() async {
-    // only clear cookie manually for non-web platforms
-    if (kIsWeb) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(sessionCookieKey);
-  }
-
+  // Logout user
   Future<bool> logout() async {
     try {
-      print('Starting logout process...'); // Debug print
+      final token = await getToken();
 
-      final cookie = await getSessionCookie();
-      print('Retrieved cookie: $cookie'); // Debug print
+      print('Starting logout process...');
+      print('Token: $token');
 
-      Map<String, String> headers = {
-        'Content-Type': 'application/json',
-      };
+      if (token != null) {
+        final response = await http.post(
+          Uri.parse('$baseUrl/logout'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        );
 
-      if (!kIsWeb && cookie != null) {
-        headers['Cookie'] = cookie;
+        print('Logout response status: ${response.statusCode}');
+        print('Logout response body: ${response.body}');
       }
 
-      print(
-          'Sending logout request to: $baseUrl/$apiV/users.php/logout'); // Debug print
-      final response = await http.post(
-        Uri.parse(
-            '$baseUrl/$apiV/users.php/logout'), // Updated path to match login
-        headers: headers,
-      );
-
-      print('Logout response status: ${response.statusCode}'); // Debug print
-      print('Logout response body: ${response.body}'); // Debug print
-
-      // Clear cookie regardless of response
-      await clearSessionCookie();
-
-      return response.statusCode == 200;
+      // Clear local data regardless of API response
+      await clearAuthData();
+      return true;
     } catch (e) {
       print('Logout error: $e');
-      // Still clear cookie even if request fails
-      await clearSessionCookie();
-      throw Exception('Logout failed: $e');
+      // Still clear local data even if API call fails
+      await clearAuthData();
+      return true; // Return true to allow logout even if API fails
     }
+  }
+
+  // Check if user is authenticated
+  Future<bool> isAuthenticated() async {
+    final token = await getToken();
+    return token != null;
+  }
+
+  // Get current user info from API
+  Future<User?> getCurrentUser() async {
+    try {
+      final token = await getToken();
+      if (token == null) return null;
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/user'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final userData = jsonDecode(response.body);
+        final user = User.fromJson(userData);
+        await saveUser(user); // Update local user data
+        return user;
+      }
+      return null;
+    } catch (e) {
+      print('Get current user error: $e');
+      return null;
+    }
+  }
+
+  // Get authorization headers
+  Future<Map<String, String>> getAuthHeaders() async {
+    final token = await getToken();
+    return {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
   }
 }

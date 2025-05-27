@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pet_store_mobile_app/config/env_config.dart';
+import 'package:pet_store_mobile_app/screens/cart_screen.dart';
 import 'package:pet_store_mobile_app/screens/home_screen.dart';
 import 'package:pet_store_mobile_app/screens/login_screen.dart';
 import 'package:pet_store_mobile_app/screens/my_profile_screen.dart';
+import 'package:pet_store_mobile_app/screens/orders_screen.dart';
 import 'package:pet_store_mobile_app/screens/register_screen.dart';
+import 'package:pet_store_mobile_app/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,13 +53,62 @@ class MyApp extends StatelessWidget {
       ),
       // make the app theme mode follow the system theme mode
       themeMode: ThemeMode.system,
-      initialRoute: '/',
+      home: const AuthWrapper(),
       routes: {
-        '/': (context) => const LoginScreen(),
+        '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),
         '/profile': (context) => const MyProfileScreen(),
+        '/cart': (context) => const CartScreen(),
+        '/orders': (context) => const OrdersScreen(),
       },
     );
+  }
+}
+
+class AuthWrapper extends StatefulWidget {
+  const AuthWrapper({Key? key}) : super(key: key);
+
+  @override
+  State<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<AuthWrapper> {
+  final AuthService _authService = AuthService();
+  bool _isLoading = true;
+  bool _isAuthenticated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthStatus();
+  }
+
+  Future<void> _checkAuthStatus() async {
+    try {
+      final isAuthenticated = await _authService.isAuthenticated();
+      setState(() {
+        _isAuthenticated = isAuthenticated;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isAuthenticated = false;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    return _isAuthenticated ? const HomeScreen() : const LoginScreen();
   }
 }

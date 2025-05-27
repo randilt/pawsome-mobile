@@ -1,3 +1,53 @@
+class OrderItem {
+  final int id;
+  final int orderId;
+  final int productId;
+  final int quantity;
+  final double priceAtTime;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final Product? product;
+
+  OrderItem({
+    required this.id,
+    required this.orderId,
+    required this.productId,
+    required this.quantity,
+    required this.priceAtTime,
+    required this.createdAt,
+    required this.updatedAt,
+    this.product,
+  });
+
+  factory OrderItem.fromJson(Map<String, dynamic> json) {
+    return OrderItem(
+      id: json['id'],
+      orderId: json['order_id'],
+      productId: json['product_id'],
+      quantity: json['quantity'],
+      priceAtTime: double.parse(json['price_at_time'].toString()),
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+      product:
+          json['product'] != null ? Product.fromJson(json['product']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'order_id': orderId,
+      'product_id': productId,
+      'quantity': quantity,
+      'price_at_time': priceAtTime,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+      if (product != null) 'product': product!.toJson(),
+    };
+  }
+}
+
+// Import the Product model
 class Product {
   final int id;
   final String name;

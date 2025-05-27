@@ -25,7 +25,7 @@ class CategorySlider extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: NetworkImage(category.imageUrl),
+                  backgroundImage: NetworkImage(category.imageUrl ?? ''),
                 ),
                 const SizedBox(height: 8),
                 Text(

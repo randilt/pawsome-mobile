@@ -1,32 +1,51 @@
 import 'dart:convert';
-
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
-import 'package:pet_store_mobile_app/config/env_config.dart';
+import '../config/env_config.dart';
 import 'auth_service.dart';
 
 class BaseService {
   static final String baseUrl = EnvConfig.apiBaseUrl;
-  static final String apiV = EnvConfig.apiVersion;
   final AuthService _authService = AuthService();
 
   Future<http.Response> get(String endpoint) async {
-    final cookie = await _authService.getSessionCookie();
+    final headers = await _authService.getAuthHeaders();
+    final url = endpoint.startsWith('http') ? endpoint : '$baseUrl/$endpoint';
+
     return http.get(
-      Uri.parse('$baseUrl/$apiV/$endpoint'),
-      headers: !kIsWeb && cookie != null ? {'Cookie': cookie} : {},
+      Uri.parse(url),
+      headers: headers,
     );
   }
 
   Future<http.Response> post(String endpoint, {Object? body}) async {
-    final cookie = await _authService.getSessionCookie();
+    final headers = await _authService.getAuthHeaders();
+    final url = endpoint.startsWith('http') ? endpoint : '$baseUrl/$endpoint';
+
     return http.post(
-      Uri.parse('$baseUrl/$endpoint'),
+      Uri.parse(url),
       body: body != null ? jsonEncode(body) : null,
-      headers: {
-        'Content-Type': 'application/json',
-        if (!kIsWeb && cookie != null) 'Cookie': cookie,
-      },
+      headers: headers,
+    );
+  }
+
+  Future<http.Response> put(String endpoint, {Object? body}) async {
+    final headers = await _authService.getAuthHeaders();
+    final url = endpoint.startsWith('http') ? endpoint : '$baseUrl/$endpoint';
+
+    return http.put(
+      Uri.parse(url),
+      body: body != null ? jsonEncode(body) : null,
+      headers: headers,
+    );
+  }
+
+  Future<http.Response> delete(String endpoint) async {
+    final headers = await _authService.getAuthHeaders();
+    final url = endpoint.startsWith('http') ? endpoint : '$baseUrl/$endpoint';
+
+    return http.delete(
+      Uri.parse(url),
+      headers: headers,
     );
   }
 }

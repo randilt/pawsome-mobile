@@ -1,7 +1,8 @@
-// widgets/common/custom_bottom_nav.dart
+// lib/widgets/custom_bottom_nav.dart
 import 'package:flutter/material.dart';
+import '../services/cart_service.dart';
 
-class CustomBottomNav extends StatelessWidget {
+class CustomBottomNav extends StatefulWidget {
   final int currentIndex;
 
   const CustomBottomNav({
@@ -9,8 +10,35 @@ class CustomBottomNav extends StatelessWidget {
     required this.currentIndex,
   }) : super(key: key);
 
+  @override
+  State<CustomBottomNav> createState() => _CustomBottomNavState();
+}
+
+class _CustomBottomNavState extends State<CustomBottomNav> {
+  final CartService _cartService = CartService();
+  int _cartItemCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCartCount();
+  }
+
+  Future<void> _loadCartCount() async {
+    try {
+      final count = await _cartService.getCartItemCount();
+      if (mounted) {
+        setState(() {
+          _cartItemCount = count;
+        });
+      }
+    } catch (e) {
+      print('Error loading cart count: $e');
+    }
+  }
+
   void _handleNavigation(BuildContext context, int index) {
-    if (index == currentIndex) return;
+    if (index == widget.currentIndex) return;
 
     switch (index) {
       case 0:
@@ -35,7 +63,7 @@ class CustomBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: currentIndex,
+      currentIndex: widget.currentIndex,
       onTap: (index) => _handleNavigation(context, index),
       items: [
         const BottomNavigationBarItem(
@@ -43,10 +71,12 @@ class CustomBottomNav extends StatelessWidget {
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Badge(
-            label: const Text('3'),
-            child: const Icon(Icons.shopping_cart),
-          ),
+          icon: _cartItemCount > 0
+              ? Badge(
+                  label: Text(_cartItemCount.toString()),
+                  child: const Icon(Icons.shopping_cart),
+                )
+              : const Icon(Icons.shopping_cart),
           label: 'My Cart',
         ),
         const BottomNavigationBarItem(
