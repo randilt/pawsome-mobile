@@ -1,0 +1,2 @@
+/home/randil/uni/MAD/pawsome_mobile/android/app/.cxx/Debug/2g1a4s1d/x86_64/CMakeFiles/edit_cache.dir
+/home/randil/uni/MAD/pawsome_mobile/android/app/.cxx/Debug/2g1a4s1d/x86_64/CMakeFiles/rebuild_cache.dir

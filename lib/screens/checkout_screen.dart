@@ -3,6 +3,7 @@ import '../models/cart_item.dart';
 import '../services/order_service.dart';
 import '../services/cart_service.dart';
 import '../services/auth_service.dart';
+import '../services/location_service.dart';
 import 'order_success_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -27,8 +28,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final OrderService _orderService = OrderService();
   final CartService _cartService = CartService();
   final AuthService _authService = AuthService();
+  final LocationService _locationService = LocationService();
 
   bool _isLoading = false;
+  bool _isLoadingLocation = false;
   double _total = 0.0;
 
   @override
@@ -56,6 +59,96 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+  Future<void> _getCurrentLocation() async {
+    setState(() => _isLoadingLocation = true);
+
+    try {
+      final addressData = await _locationService.getCurrentAddress();
+      if (addressData != null) {
+        setState(() {
+          _addressController.text = addressData['street'] ?? '';
+          _cityController.text = addressData['city'] ?? '';
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Location retrieved successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      String errorMessage = e.toString();
+      if (errorMessage.contains('Location services are disabled')) {
+        _showLocationSettingsDialog();
+      } else if (errorMessage.contains('permanently denied')) {
+        _showAppSettingsDialog();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Error getting location: ${e.toString().replaceAll('Exception: ', '')}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setState(() => _isLoadingLocation = false);
+    }
+  }
+
+  void _showLocationSettingsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Location Services Disabled'),
+          content: const Text(
+              'Please enable location services in your device settings to use this feature.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _locationService.openLocationSettings();
+              },
+              child: const Text('Open Settings'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAppSettingsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Location Permission Required'),
+          content: const Text(
+              'Location permission is permanently denied. Please enable it in app settings.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _locationService.openAppSettings();
+              },
+              child: const Text('Open Settings'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _placeOrder() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -71,10 +164,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
 
       if (order != null) {
-        // Clear cart after successful order
+        // clear cart after successful order
         await _cartService.clearCart();
 
-        // Navigate to success screen
+        // navigate to success screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -222,13 +315,49 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Shipping Information',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Shipping Information',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: IconButton(
+                    onPressed: _isLoadingLocation ? null : _getCurrentLocation,
+                    icon: _isLoadingLocation
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.blue,
+                            ),
+                          )
+                        : const Icon(Icons.my_location, color: Colors.blue),
+                    tooltip: 'Use current location',
+                  ),
+                ),
+              ],
             ),
+            if (_isLoadingLocation)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  'Getting your location...',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _addressController,
@@ -236,6 +365,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 labelText: 'Street Address',
                 hintText: 'Enter your street address',
                 border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.home),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -251,6 +381,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 labelText: 'City',
                 hintText: 'Enter your city',
                 border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.location_city),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -266,6 +397,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 labelText: 'Phone Number',
                 hintText: 'Enter your phone number',
                 border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.phone),
               ),
               keyboardType: TextInputType.phone,
               validator: (value) {
@@ -282,6 +414,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 labelText: 'Delivery Notes (Optional)',
                 hintText: 'Any special instructions for delivery',
                 border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.note),
               ),
               maxLines: 3,
             ),
