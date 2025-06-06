@@ -7,6 +7,8 @@ class EnvConfig {
 
   static String get apiVersion => dotenv.env['API_VERSION'] ?? '';
 
+  static String get imgBBApiKey => dotenv.env['IMGBB_API_KEY'] ?? '';
+
   static Future<void> initialize() async {
     // load the default .env file
     await dotenv.load(fileName: ".env");

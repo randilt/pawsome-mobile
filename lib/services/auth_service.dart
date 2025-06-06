@@ -204,4 +204,16 @@ class AuthService {
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
+
+  Future<void> debugAuthStatus() async {
+    final token = await getToken();
+    final user = await getUser();
+
+    print('=== AUTH DEBUG ===');
+    print('Token exists: ${token != null}');
+    print('Token: ${token?.substring(0, 20)}...');
+    print('User exists: ${user != null}');
+    print('User name: ${user?.name}');
+    print('==================');
+  }
 }

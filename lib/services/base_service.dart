@@ -21,6 +21,12 @@ class BaseService {
     final headers = await _authService.getAuthHeaders();
     final url = endpoint.startsWith('http') ? endpoint : '$baseUrl/$endpoint';
 
+    print('=== API REQUEST DEBUG ===');
+    print('URL: $url');
+    print('Headers: $headers');
+    print('Body: ${body != null ? jsonEncode(body) : 'null'}');
+    print('========================');
+
     return http.post(
       Uri.parse(url),
       body: body != null ? jsonEncode(body) : null,
