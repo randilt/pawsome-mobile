@@ -11,6 +11,11 @@ class BaseService {
     final headers = await _authService.getAuthHeaders();
     final url = endpoint.startsWith('http') ? endpoint : '$baseUrl/$endpoint';
 
+    print('=== GET REQUEST DEBUG ===');
+    print('URL: $url');
+    print('Headers: $headers');
+    print('========================');
+
     return http.get(
       Uri.parse(url),
       headers: headers,
@@ -21,17 +26,25 @@ class BaseService {
     final headers = await _authService.getAuthHeaders();
     final url = endpoint.startsWith('http') ? endpoint : '$baseUrl/$endpoint';
 
-    print('=== API REQUEST DEBUG ===');
+    print('=== POST REQUEST DEBUG ===');
     print('URL: $url');
     print('Headers: $headers');
     print('Body: ${body != null ? jsonEncode(body) : 'null'}');
-    print('========================');
+    print('=========================');
 
-    return http.post(
+    final response = await http.post(
       Uri.parse(url),
       body: body != null ? jsonEncode(body) : null,
       headers: headers,
     );
+
+    print('=== RESPONSE DEBUG ===');
+    print('Status: ${response.statusCode}');
+    print('Response Headers: ${response.headers}');
+    print('Body: ${response.body}');
+    print('======================');
+
+    return response;
   }
 
   Future<http.Response> put(String endpoint, {Object? body}) async {

@@ -44,6 +44,28 @@ class AuthService {
     await prefs.remove(userKey);
   }
 
+  Future<Map<String, String>> getAuthHeaders() async {
+    final token = await getToken();
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json', // This was missing!
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
+
+  // Debug auth status
+  Future<void> debugAuthStatus() async {
+    final token = await getToken();
+    final user = await getUser();
+
+    print('=== AUTH DEBUG ===');
+    print('Token exists: ${token != null}');
+    print('Token: ${token?.substring(0, 20)}...');
+    print('User exists: ${user != null}');
+    print('User name: ${user?.name}');
+    print('==================');
+  }
+
   // Register user
   Future<Map<String, dynamic>> register(
       String name, String email, String password) async {
@@ -56,7 +78,10 @@ class AuthService {
           'password': password,
           'password_confirmation': password,
         }),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       );
 
       print('Register response status: ${response.statusCode}');
@@ -104,7 +129,10 @@ class AuthService {
           'email': email,
           'password': password,
         }),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       );
 
       print('Login response status: ${response.statusCode}');
@@ -144,6 +172,7 @@ class AuthService {
           Uri.parse('$baseUrl/logout'),
           headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'Authorization': 'Bearer $token',
           },
         );
@@ -179,6 +208,7 @@ class AuthService {
         Uri.parse('$baseUrl/user'),
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
@@ -194,26 +224,5 @@ class AuthService {
       print('Get current user error: $e');
       return null;
     }
-  }
-
-  // Get authorization headers
-  Future<Map<String, String>> getAuthHeaders() async {
-    final token = await getToken();
-    return {
-      'Content-Type': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
-    };
-  }
-
-  Future<void> debugAuthStatus() async {
-    final token = await getToken();
-    final user = await getUser();
-
-    print('=== AUTH DEBUG ===');
-    print('Token exists: ${token != null}');
-    print('Token: ${token?.substring(0, 20)}...');
-    print('User exists: ${user != null}');
-    print('User name: ${user?.name}');
-    print('==================');
   }
 }

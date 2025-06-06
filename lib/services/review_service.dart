@@ -74,7 +74,7 @@ class ReviewService extends BaseService {
         'rating': rating,
         'title': title,
         'comment': comment,
-        'image_url': imageUrl,
+        if (imageUrl != null) 'image_url': imageUrl,
       };
 
       print('Submitting review: ${jsonEncode(reviewData)}');
@@ -86,11 +86,22 @@ class ReviewService extends BaseService {
       print('Submit review response body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        return data['success'] == true;
+        try {
+          final Map<String, dynamic> data = json.decode(response.body);
+          return data['success'] == true;
+        } catch (e) {
+          print('Error parsing response JSON: $e');
+          return false;
+        }
+      } else if (response.statusCode == 302) {
+        throw Exception('Authentication failed. Please login again.');
       } else {
-        final errorData = json.decode(response.body);
-        throw Exception(errorData['message'] ?? 'Failed to submit review');
+        try {
+          final errorData = json.decode(response.body);
+          throw Exception(errorData['message'] ?? 'Failed to submit review');
+        } catch (e) {
+          throw Exception('Failed to submit review: ${response.statusCode}');
+        }
       }
     } catch (e) {
       print('Error submitting review: $e');
