@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/cart_item.dart';
 import '../services/cart_service.dart';
 import '../widgets/custom_bottom_nav.dart';
+import '../widgets/biometric_auth_button.dart';
+import '../services/biometric_service.dart';
 import 'checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -68,7 +70,7 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
-  void _proceedToCheckout() {
+  Future<void> _proceedToCheckout() async {
     if (_cartItems.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Your cart is empty')),
@@ -76,6 +78,89 @@ class _CartScreenState extends State<CartScreen> {
       return;
     }
 
+    final biometricService = BiometricService();
+
+    // First check if the device supports biometrics
+    final isDeviceSupported = await biometricService.isDeviceSupported();
+    if (!isDeviceSupported) {
+      _navigateToCheckout();
+      return;
+    }
+
+    // Then check if biometrics are available and enrolled
+    final isBiometricAvailable = await biometricService.isBiometricAvailable();
+    if (!isBiometricAvailable) {
+      // Show a dialog explaining why biometrics aren't available
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Biometric Authentication Not Available'),
+              content: const Text(
+                'No biometric authentication is set up on this device. Would you like to proceed without authentication?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _navigateToCheckout();
+                  },
+                  child: const Text('Proceed'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+      return;
+    }
+
+    // If biometrics are available, show the authentication dialog
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Secure Checkout'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Please authenticate to proceed with checkout',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                BiometricAuthButton(
+                  buttonText: 'Authenticate & Continue',
+                  onSuccess: () {
+                    Navigator.pop(context); // Close dialog
+                    _navigateToCheckout();
+                  },
+                  onFailure: () {
+                    Navigator.pop(context); // Close dialog
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text('Authentication failed. Please try again.'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  void _navigateToCheckout() {
     Navigator.push(
       context,
       MaterialPageRoute(
