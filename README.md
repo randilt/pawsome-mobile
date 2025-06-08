@@ -15,20 +15,17 @@ A Flutter mobile application for pet supplies shopping, developed as part of the
 ## Screenshots
 
 ### Authentication
-
-[Add screenshot of login screen]
-[Add screenshot of registration screen]
+![WhatsApp Image 2025-06-08 at 2 17 51 PM](https://github.com/user-attachments/assets/eee1d2ee-b423-4614-906c-3a442fcf144b)
+![WhatsApp Image 2025-06-08 at 2 17 52 PM](https://github.com/user-attachments/assets/031437de-90dd-448a-9953-824291ad983d)
 
 ### Home & Product Browsing
-
-[Add screenshot of home screen]
-[Add screenshot of product details screen]
+![WhatsApp Image 2025-06-08 at 2 17 53 PM](https://github.com/user-attachments/assets/3ce150fc-edde-4492-ba4a-41dd79199460)
+![WhatsApp Image 2025-06-08 at 2 17 53 PM (1)](https://github.com/user-attachments/assets/6f8b18b8-d88e-4839-a3d1-ce70843c2c55)
 
 ### Shopping Experience
-
-[Add screenshot of cart screen]
-[Add screenshot of checkout screen]
-[Add screenshot of favorites screen]
+![WhatsApp Image 2025-06-08 at 2 17 53 PM (2)](https://github.com/user-attachments/assets/e2b43572-37ee-44b9-81d4-d8a34b23f1fc)
+![WhatsApp Image 2025-06-08 at 2 17 54 PM](https://github.com/user-attachments/assets/0c7c5b5e-166c-4c65-b2df-48896f473870)
+![WhatsApp Image 2025-06-08 at 2 17 54 PM (1)](https://github.com/user-attachments/assets/8dd59ffc-b0c6-41be-9869-b9e978606a4d)
 
 ## Technology Stack
 
