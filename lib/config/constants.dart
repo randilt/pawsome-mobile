@@ -7,11 +7,12 @@ class AppColors {
 }
 
 class AppStyles {
-  static final inputDecoration = (
-      {required String label,
-      required String hint,
-      required IconData prefixIcon,
-      Widget? suffixIcon}) {
+  static InputDecoration inputDecoration({
+    required String label,
+    required String hint,
+    required IconData prefixIcon,
+    Widget? suffixIcon,
+  }) {
     return InputDecoration(
       labelText: label,
       hintText: hint,
@@ -32,7 +33,7 @@ class AppStyles {
       filled: true,
       fillColor: Colors.white.withOpacity(0.9),
     );
-  };
+  }
 
   static final buttonStyle = ElevatedButton.styleFrom(
     padding: const EdgeInsets.symmetric(vertical: 16),

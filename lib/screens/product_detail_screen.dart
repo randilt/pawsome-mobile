@@ -3,6 +3,7 @@ import '../models/product.dart';
 import '../models/review.dart';
 import '../services/cart_service.dart';
 import '../services/review_service.dart';
+import '../services/favorites_service.dart';
 import '../widgets/custom_bottom_nav.dart';
 import '../widgets/review/review_card.dart';
 import '../widgets/review/rating_summary.dart';
@@ -12,9 +13,9 @@ class ProductDetailsScreen extends StatefulWidget {
   final Product? product;
 
   const ProductDetailsScreen({
-    Key? key,
+    super.key,
     this.product,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -23,9 +24,11 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final CartService _cartService = CartService();
   final ReviewService _reviewService = ReviewService();
+  final FavoritesService _favoritesService = FavoritesService();
 
   int quantity = 1;
   bool _isAddingToCart = false;
+  bool _isFavorite = false;
   List<Review> _reviews = [];
   ReviewStats? _reviewStats;
   bool _loadingReviews = false;
@@ -34,6 +37,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void initState() {
     super.initState();
     _loadReviews();
+    _checkFavoriteStatus();
   }
 
   Future<void> _loadReviews() async {
@@ -54,6 +58,38 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     } catch (e) {
       setState(() => _loadingReviews = false);
       print('Error loading reviews: $e');
+    }
+  }
+
+  Future<void> _checkFavoriteStatus() async {
+    if (widget.product == null) return;
+    final isFavorite = await _favoritesService.isFavorite(widget.product!.id);
+    if (mounted) {
+      setState(() {
+        _isFavorite = isFavorite;
+      });
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (widget.product == null) return;
+    try {
+      if (_isFavorite) {
+        await _favoritesService.removeFromFavorites(widget.product!.id);
+      } else {
+        await _favoritesService.addToFavorites(widget.product!);
+      }
+      if (mounted) {
+        setState(() {
+          _isFavorite = !_isFavorite;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating favorite: $e')),
+        );
+      }
     }
   }
 
@@ -211,23 +247,37 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.product?.name ?? 'No title available',
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                widget.product?.name ?? '',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                _isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: _isFavorite ? Colors.red : null,
+              ),
+              onPressed: _toggleFavorite,
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         Text(
-          'Rs. ${widget.product?.price ?? 0.00}',
-          style: const TextStyle(
+          '\$${widget.product?.price.toStringAsFixed(2) ?? '0.00'}',
+          style: TextStyle(
             fontSize: 20,
+            color: Theme.of(context).primaryColor,
             fontWeight: FontWeight.bold,
-            color: Colors.blue,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         if (widget.product?.stockQuantity != null)
           Text(
             'In Stock: ${widget.product!.stockQuantity}',

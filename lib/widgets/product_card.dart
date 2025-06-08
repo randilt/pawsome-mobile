@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pet_store_mobile_app/models/product.dart';
+import 'package:pet_store_mobile_app/services/favorites_service.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   final Product product;
   final VoidCallback onTap;
 
@@ -12,23 +13,82 @@ class ProductCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  final FavoritesService _favoritesService = FavoritesService();
+  bool _isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFavoriteStatus();
+  }
+
+  Future<void> _checkFavoriteStatus() async {
+    final isFavorite = await _favoritesService.isFavorite(widget.product.id);
+    if (mounted) {
+      setState(() {
+        _isFavorite = isFavorite;
+      });
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    try {
+      if (_isFavorite) {
+        await _favoritesService.removeFromFavorites(widget.product.id);
+      } else {
+        await _favoritesService.addToFavorites(widget.product);
+      }
+      if (mounted) {
+        setState(() {
+          _isFavorite = !_isFavorite;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating favorite: $e')),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Get theme colors
     // final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Card(
         elevation: 0.5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
         color: Theme.of(context).cardColor,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            _buildProductImage(),
-            _buildProductInfo(context),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProductImage(),
+                _buildProductInfo(context),
+              ],
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: IconButton(
+                icon: Icon(
+                  _isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: _isFavorite ? Colors.red : Colors.white,
+                ),
+                onPressed: _toggleFavorite,
+              ),
+            ),
           ],
         ),
       ),
@@ -42,7 +102,7 @@ class ProductCard extends StatelessWidget {
           top: Radius.circular(5),
         ),
         child: Image.network(
-          product.imageUrl ?? 'assets/images/placeholder.jpg',
+          widget.product.imageUrl ?? 'assets/images/placeholder.jpg',
           fit: BoxFit.cover,
           width: double.infinity,
           errorBuilder: (context, error, stackTrace) {
@@ -63,9 +123,9 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ProductName(name: product.name),
+          _ProductName(name: widget.product.name),
           const SizedBox(height: 4),
-          _ProductPrice(price: product.price),
+          _ProductPrice(price: widget.product.price),
         ],
       ),
     );

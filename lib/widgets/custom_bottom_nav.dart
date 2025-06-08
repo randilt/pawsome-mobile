@@ -57,6 +57,10 @@ class _CustomBottomNavState extends State<CustomBottomNav> {
         // navigate to profile
         Navigator.pushNamed(context, '/profile');
         break;
+      case 3:
+        // navigate to favorites
+        Navigator.pushNamed(context, '/favorites');
+        break;
     }
   }
 
@@ -65,6 +69,7 @@ class _CustomBottomNavState extends State<CustomBottomNav> {
     return BottomNavigationBar(
       currentIndex: widget.currentIndex,
       onTap: (index) => _handleNavigation(context, index),
+      type: BottomNavigationBarType.fixed,
       items: [
         const BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -82,6 +87,10 @@ class _CustomBottomNavState extends State<CustomBottomNav> {
         const BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: 'My Profile',
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.favorite),
+          label: 'Favorites',
         ),
       ],
     );

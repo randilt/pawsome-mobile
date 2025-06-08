@@ -9,9 +9,9 @@ class WriteReviewScreen extends StatefulWidget {
   final Product product;
 
   const WriteReviewScreen({
-    Key? key,
+    super.key,
     required this.product,
-  }) : super(key: key);
+  });
 
   @override
   State<WriteReviewScreen> createState() => _WriteReviewScreenState();

@@ -5,9 +5,9 @@ class OrderSuccessScreen extends StatelessWidget {
   final Order order;
 
   const OrderSuccessScreen({
-    Key? key,
+    super.key,
     required this.order,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

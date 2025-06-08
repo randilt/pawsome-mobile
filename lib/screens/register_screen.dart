@@ -5,7 +5,7 @@ import 'package:pet_store_mobile_app/widgets/auth/auth_screen_layout.dart';
 import 'package:pet_store_mobile_app/widgets/loading_button.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();

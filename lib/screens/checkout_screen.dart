@@ -214,17 +214,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildOrderSummary() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Order Summary',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 12),
@@ -233,19 +235,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Total:',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 Text(
                   'Rs. ${_total.toStringAsFixed(2)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                    color: colorScheme.primary,
                   ),
                 ),
               ],
@@ -257,6 +260,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildOrderItem(CartItem item) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -272,8 +276,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 return Container(
                   width: 50,
                   height: 50,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image, size: 24),
+                  color: colorScheme.surfaceVariant,
+                  child: Icon(Icons.image,
+                      size: 24, color: colorScheme.onSurfaceVariant),
                 );
               },
             ),
@@ -285,14 +290,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               children: [
                 Text(
                   item.product.name,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onSurface,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   'Qty: ${item.quantity} × Rs. ${item.product.price}',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 12,
                   ),
                 ),
@@ -301,7 +309,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
           Text(
             'Rs. ${item.totalPrice.toStringAsFixed(2)}',
-            style: const TextStyle(fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSurface,
+            ),
           ),
         ],
       ),
@@ -309,6 +320,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildShippingForm() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -318,42 +330,43 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Shipping Information',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.blue[50],
+                    color: colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
                     onPressed: _isLoadingLocation ? null : _getCurrentLocation,
                     icon: _isLoadingLocation
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.blue,
+                              color: colorScheme.primary,
                             ),
                           )
-                        : const Icon(Icons.my_location, color: Colors.blue),
+                        : Icon(Icons.my_location, color: colorScheme.primary),
                     tooltip: 'Use current location',
                   ),
                 ),
               ],
             ),
             if (_isLoadingLocation)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
                   'Getting your location...',
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: colorScheme.primary,
                     fontSize: 12,
                   ),
                 ),
@@ -361,11 +374,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _addressController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Street Address',
                 hintText: 'Enter your street address',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.home),
+                prefixIcon: Icon(Icons.home, color: colorScheme.primary),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -377,11 +389,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _cityController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'City',
                 hintText: 'Enter your city',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.location_city),
+                prefixIcon:
+                    Icon(Icons.location_city, color: colorScheme.primary),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -393,11 +405,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _phoneController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Phone Number',
                 hintText: 'Enter your phone number',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.phone),
+                prefixIcon: Icon(Icons.phone, color: colorScheme.primary),
               ),
               keyboardType: TextInputType.phone,
               validator: (value) {
@@ -410,11 +421,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _notesController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Delivery Notes (Optional)',
                 hintText: 'Any special instructions for delivery',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.note),
+                prefixIcon: Icon(Icons.note, color: colorScheme.primary),
               ),
               maxLines: 3,
             ),
@@ -425,36 +435,39 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildPaymentInfo() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Payment Method',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue[200]!),
+                border: Border.all(color: colorScheme.primary.withOpacity(0.5)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.payment, color: Colors.blue),
-                  SizedBox(width: 12),
+                  Icon(Icons.payment, color: colorScheme.primary),
+                  const SizedBox(width: 12),
                   Text(
                     'Cash on Delivery (COD)',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
+                      color: colorScheme.onPrimaryContainer,
                     ),
                   ),
                 ],
@@ -467,37 +480,42 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildPlaceOrderButton() {
+    final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _isLoading ? null : _placeOrder,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
         ),
         child: _isLoading
-            ? const Row(
+            ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                      color: Colors.white,
+                      color: colorScheme.onPrimary,
                       strokeWidth: 2,
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Text('Placing Order...'),
                 ],
               )
             : Text(
                 'Place Order - Rs. ${_total.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 18),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onPrimary,
+                ),
               ),
       ),
     );

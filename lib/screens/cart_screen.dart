@@ -7,7 +7,7 @@ import '../services/biometric_service.dart';
 import 'checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({Key? key}) : super(key: key);
+  const CartScreen({super.key});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -359,13 +359,15 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCartSummary() {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Theme.of(context).shadowColor.withAlpha(51),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, -2),
@@ -377,19 +379,20 @@ class _CartScreenState extends State<CartScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Total:',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               Text(
                 'Rs. ${_total.toStringAsFixed(2)}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: isDarkMode ? Colors.blue[300] : Colors.blue[700],
                 ),
               ),
             ],
@@ -400,7 +403,7 @@ class _CartScreenState extends State<CartScreen> {
             child: ElevatedButton(
               onPressed: _proceedToCheckout,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: isDarkMode ? Colors.blue[700] : Colors.blue,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(

@@ -6,6 +6,7 @@ import 'package:pet_store_mobile_app/screens/login_screen.dart';
 import 'package:pet_store_mobile_app/screens/my_profile_screen.dart';
 import 'package:pet_store_mobile_app/screens/orders_screen.dart';
 import 'package:pet_store_mobile_app/screens/register_screen.dart';
+import 'package:pet_store_mobile_app/screens/favorites_screen.dart';
 import 'package:pet_store_mobile_app/services/auth_service.dart';
 
 void main() async {
@@ -29,13 +30,26 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,
           primary: Colors.blue,
+          brightness: Brightness.light,
         ),
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           elevation: 0,
+          foregroundColor: Colors.black,
         ),
         scaffoldBackgroundColor: Colors.white,
+        cardTheme: const CardTheme(
+          color: Colors.white,
+          elevation: 2,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.grey[50],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
       ),
       // dark theme configuration
       darkTheme: ThemeData(
@@ -48,8 +62,20 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
           elevation: 0,
+          foregroundColor: Colors.white,
         ),
         scaffoldBackgroundColor: Colors.black,
+        cardTheme: CardTheme(
+          color: Colors.grey[900],
+          elevation: 2,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.grey[800],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
       ),
       // make the app theme mode follow the system theme mode
       themeMode: ThemeMode.system,
@@ -61,13 +87,14 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const MyProfileScreen(),
         '/cart': (context) => const CartScreen(),
         '/orders': (context) => const OrdersScreen(),
+        '/favorites': (context) => const FavoritesScreen(),
       },
     );
   }
 }
 
 class AuthWrapper extends StatefulWidget {
-  const AuthWrapper({Key? key}) : super(key: key);
+  const AuthWrapper({super.key});
 
   @override
   State<AuthWrapper> createState() => _AuthWrapperState();
